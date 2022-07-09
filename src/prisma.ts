@@ -306,6 +306,11 @@ export const findSong = async (file: string) => {
 export const findSongsById = async (songsIds: string[]) => {
   return client.song.findMany({
     where: { id: { in: songsIds } },
+    include: {
+      artist: true,
+      album: true,
+      directory: true,
+    },
   });
 };
 
