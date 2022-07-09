@@ -18,6 +18,18 @@ export const findUser = async (email: string) => {
 };
 
 /**
+ * Find a unique user by its ID.
+ *
+ * @param userId User ID.
+ * @returns User or null.
+ */
+export const findUserById = async (userId: string) => {
+  return client.user.findUnique({
+    where: { id: userId },
+  });
+};
+
+/**
  * Create a new user.
  *
  * @param email Email.
@@ -35,6 +47,35 @@ export const createUser = async (
       email,
       username,
       password,
+    },
+  });
+};
+
+/**
+ * Find all user likes by user ID.
+ *
+ * @param userId User identifier.
+ * @returns List of all songs IDs liked by the user.
+ */
+export const findUserLikes = async (userId: string) => {
+  return client.user.findFirst({
+    where: { id: userId },
+    select: { likes: true },
+  });
+};
+
+/**
+ * Set user likes array.
+ *
+ * @param userId User ID.
+ * @param songsIds Array of songs IDs.
+ * @returns Updated user object.
+ */
+export const setUserLikes = async (userId: string, songsIds: string[]) => {
+  return client.user.update({
+    where: { id: userId },
+    data: {
+      likes: { set: songsIds },
     },
   });
 };

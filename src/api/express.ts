@@ -1,19 +1,28 @@
 import fs from "fs";
 import path from "path";
-import express from "express";
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
 import bodyparser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import ratelimit from "express-rate-limit";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 import { getSongCover } from "./services/song.service";
 import {
   getRootDirectories,
   getDirectoryContent,
 } from "./services/directory.service";
-import { loginUser, registerUser } from "./services/user.service";
+import {
+  loginUser,
+  registerUser,
+  getUserLikes,
+  toggleUserLike,
+} from "./services/user.service";
 import { getAudioStream } from "./services/stream.service";
 import { jwtAuth } from "./middlewares/jwt-auth.middleware";
 
@@ -89,6 +98,29 @@ app.post(
   body("password"),
   (req, res) => {
     loginUser(req, res).catch((err) => console.log(err));
+  }
+);
+
+app.get(
+  "/api/user/likes",
+  query("userId").isMongoId(),
+  (req: Request, res: Response, next: NextFunction) => {
+    jwtAuth(req, res, next).catch((err) => console.log(err));
+  },
+  (req: Request, res: Response) => {
+    getUserLikes(req, res).catch((err) => console.log(err));
+  }
+);
+
+app.post(
+  "/api/user/likes",
+  body("userId").isMongoId(),
+  body("songId").isMongoId(),
+  (req: Request, res: Response, next: NextFunction) => {
+    jwtAuth(req, res, next).catch((err) => console.log(err));
+  },
+  (req: Request, res: Response) => {
+    toggleUserLike(req, res).catch((err) => console.log(err));
   }
 );
 
