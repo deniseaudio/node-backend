@@ -1,5 +1,5 @@
 import type { User } from "@prisma/client";
-import type { Request, Response } from "express-serve-static-core";
+import type { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 
@@ -10,6 +10,7 @@ import {
   findUserById,
   findUserLikes,
   setUserLikes,
+  findSongsById,
 } from "../../prisma";
 import { signToken } from "../jwt-utils";
 
@@ -178,6 +179,33 @@ export const toggleUserLike = async (req: Request, res: Response) => {
 
       res.status(200).send({ likes: response.likes });
     }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: "something went wrong" });
+  }
+};
+
+export const getLikesAsSongs = async (req: Request, res: Response) => {
+  const validationErrors = validationResult(req);
+
+  if (!validationErrors.isEmpty()) {
+    res.status(400).json({ errors: validationErrors.array() });
+    return;
+  }
+
+  const { userId } = req.body as { userId: string; songId: string };
+
+  const user = await findUserLikes(userId);
+
+  if (!user) {
+    res.status(404).send({ error: "user doesn't exist" });
+    return;
+  }
+
+  try {
+    const response = await findSongsById(user.likes);
+
+    res.status(200).send(response);
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: "something went wrong" });

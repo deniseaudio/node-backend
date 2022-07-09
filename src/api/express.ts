@@ -22,6 +22,7 @@ import {
   registerUser,
   getUserLikes,
   toggleUserLike,
+  getLikesAsSongs,
 } from "./services/user.service";
 import { getAudioStream } from "./services/stream.service";
 import { jwtAuth } from "./middlewares/jwt-auth.middleware";
@@ -121,6 +122,17 @@ app.post(
   },
   (req: Request, res: Response) => {
     toggleUserLike(req, res).catch((err) => console.log(err));
+  }
+);
+
+app.get(
+  "/api/user/likes-as-songs",
+  query("userId").isMongoId(),
+  (req: Request, res: Response, next: NextFunction) => {
+    jwtAuth(req, res, next).catch((err) => console.log(err));
+  },
+  (req: Request, res: Response) => {
+    getLikesAsSongs(req, res).catch((err) => console.log(err));
   }
 );
 

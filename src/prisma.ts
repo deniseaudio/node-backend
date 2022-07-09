@@ -298,6 +298,18 @@ export const findSong = async (file: string) => {
 };
 
 /**
+ * Find songs by their IDs.
+ *
+ * @param songsIds Array of songs IDs.
+ * @returns Array of songs.
+ */
+export const findSongsById = async (songsIds: string[]) => {
+  return client.song.findMany({
+    where: { id: { in: songsIds } },
+  });
+};
+
+/**
  * Create a song if it doesn't exist. Will create required artist and albums if
  * needed.
  *
