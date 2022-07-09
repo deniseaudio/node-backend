@@ -113,7 +113,7 @@ app.get(
 );
 
 app.post(
-  "/api/user/likes",
+  "/api/user/like",
   body("userId").isMongoId(),
   body("songId").isMongoId(),
   (req: Request, res: Response, next: NextFunction) => {
