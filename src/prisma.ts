@@ -73,7 +73,7 @@ export const findUserLikes = async (userId: string) => {
  */
 export const setUserLikes = async (userId: string, songsIds: string[]) => {
   return client.user.update({
-    where: { id: { equals: userId } },
+    where: { id: userId },
     data: {
       likes: { set: songsIds },
     },
