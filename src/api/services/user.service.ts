@@ -193,7 +193,7 @@ export const getLikesAsSongs = async (req: Request, res: Response) => {
     return;
   }
 
-  const { userId } = req.body as { userId: string; songId: string };
+  const { userId } = req.query as { userId: string; songId: string };
 
   const user = await findUserLikes(userId);
 
