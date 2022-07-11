@@ -1,7 +1,7 @@
 import type { Request, Response } from "express-serve-static-core";
 import type { IAudioMetadata } from "music-metadata";
 
-import { findSongById } from "../../prisma";
+import { findSongById, findSongByQuery } from "../../prisma";
 import { getFileMetadata } from "../../file-metadata";
 
 /**
@@ -57,4 +57,18 @@ export const getSongCover = async (req: Request, res: Response) => {
 
     res.end();
   });
+};
+
+export const getSongSearchResults = async (req: Request, res: Response) => {
+  const { query } = req.query as { query: string };
+
+  try {
+    const results = await findSongByQuery(query);
+
+    res.status(200).send(results);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({ error: "error while searching for song" });
+  }
 };

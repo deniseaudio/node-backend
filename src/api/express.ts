@@ -12,7 +12,7 @@ import morgan from "morgan";
 import ratelimit from "express-rate-limit";
 import { body, query } from "express-validator";
 
-import { getSongCover } from "./services/song.service";
+import { getSongCover, getSongSearchResults } from "./services/song.service";
 import {
   getRootDirectories,
   getDirectoryContent,
@@ -173,5 +173,15 @@ app.get(
   },
   (req, res) => {
     getSongCover(req, res).catch((err) => console.log(err));
+  }
+);
+
+app.get(
+  "/api/app/search",
+  (req, res, next) => {
+    jwtAuth(req, res, next).catch((err) => console.log(err));
+  },
+  (req, res) => {
+    getSongSearchResults(req, res).catch((err) => console.log(err));
   }
 );

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { type Song, PrismaClient } from "@prisma/client";
 
 import type { ValidAudioMetadata } from "./file-metadata";
 import { getLastPartOfPath } from "./fs-utils";
@@ -363,4 +363,30 @@ export const createSong = async (
       },
     },
   });
+};
+
+export const findSongByQuery = async (query: string) => {
+  const properties = ["filename", "title"];
+  const parts = query.split(" ");
+  const responses: Song[] = [];
+
+  for (let i = 0; i < properties.length; i += 1) {
+    const response = await client.song.findMany({
+      take: 10,
+      where: {
+        AND: parts.map((part) => ({
+          [properties[i]]: { contains: part, mode: "insensitive" },
+        })),
+      },
+    });
+
+    responses.push(...response);
+  }
+
+  // Remove duplicate songs by their ID.
+  const noDuplicates = responses.filter((item, i) => {
+    return responses.findIndex((item2) => item2.id === item.id) === i;
+  });
+
+  return noDuplicates;
 };
